@@ -121,48 +121,35 @@ button:hover{
   line-height:1.5;
 }
 
-#requests{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
+#generated{
+  display:none;
 }
 
-.request{
-  background:#101522;
-  border:1px solid #242c40;
-  border-radius:14px;
+.generated-box{
+  background:#080c15;
+  border:1px solid #293249;
+  border-radius:12px;
   padding:20px;
 }
 
-.request h3{
-  margin-bottom:10px;
+.generated-text{
+  white-space:pre-wrap;
+  color:#cbd2e3;
+  line-height:1.6;
+  margin-bottom:15px;
 }
 
-.request p{
-  color:#a5aec1;
-  line-height:1.5;
-  margin:7px 0;
+.copy-button{
+  background:#57d49e;
+  color:#07100c;
 }
 
-.budget{
-  display:inline-block;
-  margin-top:10px;
-  padding:7px 11px;
-  border-radius:8px;
-  background:#17251f;
+.success{
   color:#57d49e;
-  font-weight:bold;
 }
 
-.time{
-  display:block;
-  margin-top:12px;
-  color:#66718a;
-  font-size:12px;
-}
-
-.empty{
-  color:#818ba0;
+.error{
+  color:#ff7373;
 }
 
 footer{
@@ -207,15 +194,15 @@ footer{
     <div class="card">
 
       <p class="hint">
-        Tell the NEXORA community what you need.
-        Your request will appear publicly.
+        Tell us what you need.
+        Your request will be turned into a message you can copy and send.
         Use a username or nickname — don't enter your real name.
       </p>
 
       <input
         id="name"
         maxlength="30"
-        placeholder="What's your name? (Username, not real name)"
+        placeholder="Username / Nickname"
       >
 
       <input
@@ -236,63 +223,79 @@ footer{
           Select your budget
         </option>
 
-        <option value="1" data-inr="95">
+        <option value="1|95">
           $1 — ₹95
         </option>
 
-        <option value="5" data-inr="475">
+        <option value="5|475">
           $5 — ₹475
         </option>
 
-        <option value="10" data-inr="950">
+        <option value="10|950">
           $10 — ₹950
         </option>
 
-        <option value="15" data-inr="1425">
+        <option value="15|1425">
           $15 — ₹1,425
         </option>
 
-        <option value="20" data-inr="1900">
+        <option value="20|1900">
           $20 — ₹1,900
         </option>
 
-        <option value="25" data-inr="2375">
+        <option value="25|2375">
           $25 — ₹2,375
         </option>
 
-        <option value="50" data-inr="4750">
+        <option value="50|4750">
           $50 — ₹4,750
         </option>
 
-        <option value="100" data-inr="9500">
+        <option value="100|9500">
           $100 — ₹9,500
         </option>
 
       </select>
 
-      <button onclick="raiseRequest()">
-        📢 Raise Request
+      <button onclick="generateRequest()">
+        📢 Generate Request
       </button>
 
-      <p
-        id="message"
-        style="margin-top:12px;color:#8f99ae;"
-      ></p>
+      <p id="message" style="margin-top:12px;"></p>
 
     </div>
 
   </section>
 
 
-  <!-- PUBLIC REQUESTS -->
+  <!-- GENERATED REQUEST -->
 
-  <section class="section">
+  <section class="section" id="generated">
 
     <h2 class="section-title">
-      🌐 Public Requests
+      📋 Your Request
     </h2>
 
-    <div id="requests"></div>
+    <div class="generated-box">
+
+      <div
+        id="generatedText"
+        class="generated-text"
+      ></div>
+
+      <button
+        class="copy-button"
+        onclick="copyRequest()"
+      >
+        📋 Copy Request
+      </button>
+
+      <p
+        id="copyMessage"
+        style="margin-top:12px;"
+      ></p>
+
+    </div>
 
   </section>
 
@@ -306,11 +309,14 @@ footer{
 
 <script>
 
+let currentRequest = "";
+
+
 /* ======================================
-   RAISE REQUEST
+   GENERATE REQUEST
    ====================================== */
 
-function raiseRequest(){
+function generateRequest(){
 
   const name =
     document.getElementById("name")
@@ -327,20 +333,21 @@ function raiseRequest(){
   const budgetSelect =
     document.getElementById("budget");
 
-  const selected =
-    budgetSelect.options[budgetSelect.selectedIndex];
-
-  const budget =
+  const budgetValue =
     budgetSelect.value;
-
-  const inr =
-    selected ? selected.dataset.inr : "";
 
   const message =
     document.getElementById("message");
 
 
-  if(!name || !title || !description || !budget){
+  if(
+    !name ||
+    !title ||
+    !description ||
+    !budgetValue
+  ){
+
+    message.className = "error";
 
     message.textContent =
       "⚠️ Please fill in every field.";
@@ -349,132 +356,97 @@ function raiseRequest(){
   }
 
 
-  const request = {
+  const parts =
+    budgetValue.split("|");
 
-    name:name,
+  const usd =
+    parts[0];
 
-    title:title,
-
-    description:description,
-
-    budget:budget,
-
-    inr:inr,
-
-    time:new Date().toLocaleString()
-
-  };
+  const inr =
+    parts[1];
 
 
-  const requests =
-    JSON.parse(
-      localStorage.getItem("nexoraRequests")
-      || "[]"
-    );
+  currentRequest =
+`📢 NEXORA REQUEST
+
+👤 Username: ${name}
+
+🛠️ Need: ${title}
+
+📝 Details:
+${description}
+
+💵 Budget: $${usd} · ₹${inr}
+
+━━━━━━━━━━━━━━━━━━
+NEXORA`;
+
+  
+  document.getElementById("generatedText")
+    .textContent = currentRequest;
 
 
-  requests.unshift(request);
+  document.getElementById("generated")
+    .style.display = "block";
 
 
-  localStorage.setItem(
-    "nexoraRequests",
-    JSON.stringify(requests)
-  );
-
-
-  document.getElementById("name").value="";
-  document.getElementById("title").value="";
-  document.getElementById("description").value="";
-  document.getElementById("budget").selectedIndex=0;
-
+  message.className = "success";
 
   message.textContent =
-    "✅ Your request has been posted!";
+    "✅ Request generated!";
 
 
-  showRequests();
+  document.getElementById("generated")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
 }
 
 
 /* ======================================
-   SHOW REQUESTS
+   COPY REQUEST
    ====================================== */
 
-function showRequests(){
+async function copyRequest(){
 
-  const box =
-    document.getElementById("requests");
-
-
-  const requests =
-    JSON.parse(
-      localStorage.getItem("nexoraRequests")
-      || "[]"
-    );
+  const copyMessage =
+    document.getElementById("copyMessage");
 
 
-  if(requests.length === 0){
+  if(!currentRequest){
 
-    box.innerHTML =
-      '<p class="empty">No requests yet. Be the first!</p>';
+    copyMessage.className = "error";
+
+    copyMessage.textContent =
+      "⚠️ Generate a request first.";
 
     return;
   }
 
 
-  box.innerHTML =
-    requests.map(request => `
+  try{
 
-      <div class="request">
-
-        <h3>
-          ${escapeHTML(request.title)}
-        </h3>
-
-        <p>
-          👤 <b>${escapeHTML(request.name)}</b>
-        </p>
-
-        <p>
-          ${escapeHTML(request.description)}
-        </p>
-
-        <span class="budget">
-          💵 $${escapeHTML(request.budget)}
-          · ₹${escapeHTML(request.inr || "0")}
-        </span>
-
-        <span class="time">
-          Posted ${escapeHTML(request.time)}
-        </span>
-
-      </div>
-
-    `).join("");
-}
+    await navigator.clipboard.writeText(
+      currentRequest
+    );
 
 
-/* ======================================
-   SECURITY
-   ====================================== */
+    copyMessage.className = "success";
 
-function escapeHTML(text){
+    copyMessage.textContent =
+      "✅ Request copied!";
 
-  return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+
+  }catch(error){
+
+    copyMessage.className = "error";
+
+    copyMessage.textContent =
+      "❌ Couldn't copy automatically. Please select and copy the text.";
+
+  }
 
 }
-
-
-/* ======================================
-   LOAD
-   ====================================== */
-
-showRequests();
 
 </script>
 
