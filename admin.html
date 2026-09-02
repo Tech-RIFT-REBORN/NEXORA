@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEXORA Admin</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}body{margin:0;background:#080b14;color:#fff}header{padding:22px 30px;border-bottom:1px solid #202638;background:#0d111c;display:flex;justify-content:space-between;align-items:center}header b{letter-spacing:4px;font-size:22px}header span{color:#818cf8}.wrap{max-width:1200px;margin:auto;padding:30px}.panel,.request{background:#101522;border:1px solid #202638;border-radius:14px;padding:22px}.panel{max-width:430px;margin:60px auto}.request{margin:14px 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.stat{padding:18px;background:#101522;border:1px solid #202638;border-radius:12px}.stat strong{font-size:26px;display:block}.muted{color:#8991a5}.field{margin:12px 0}input,select{width:100%;padding:12px;background:#090d16;color:#fff;border:1px solid #252c3d;border-radius:8px}button{padding:10px 15px;border:0;border-radius:8px;cursor:pointer;color:#fff;background:#252c3d}button.primary{background:linear-gradient(135deg,#5865f2,#7c3aed)}button.danger{background:#351b26;color:#fca5a5}.top{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-block;padding:5px 9px;border-radius:6px;background:#18243a;color:#93c5fd;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.wrap{padding:18px}}
+</style>
+</head>
+<body>
+<header><b>NEX<span>ORA</span> ADMIN</b><button onclick="logout()">Sign out</button></header>
+<div class="wrap">
+<div id="login" class="panel"><h2>Admin Login</h2><p class="muted">Only your Supabase Auth account can access requests.</p><div class="field"><input id="email" type="email" placeholder="Admin email"></div><div class="field"><input id="password" type="password" placeholder="Password"></div><button class="primary" onclick="login()">Sign in</button><p id="loginMsg" class="muted"></p></div>
+<div id="dashboard" style="display:none"><div class="top"><div><h1>Requests</h1><p class="muted">Manage incoming NEXORA setup requests and see which account submitted each one.</p></div><button class="primary" onclick="loadRequests()">↻ Refresh</button></div>
+<div class="grid"><div class="stat"><strong id="all">0</strong><span class="muted">Total</span></div><div class="stat"><strong id="pending">0</strong><span class="muted">Pending</span></div><div class="stat"><strong id="progress">0</strong><span class="muted">In Progress</span></div><div class="stat"><strong id="done">0</strong><span class="muted">Completed</span></div></div>
+<div id="requests"></div></div>
+</div>
+<script>
+const SUPABASE_URL="YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
+let token=null;
+function headers(){return{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${token||SUPABASE_ANON_KEY}`,"Content-Type":"application/json"}}
+async function login(){
+ const email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
+ const msg=document.getElementById("loginMsg");
+ try{
+  const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+  const d=await r.json(); if(!r.ok) throw new Error(d.error_description||d.msg||"Login failed");
+  token=d.access_token;sessionStorage.setItem("nexora_token",token);showDashboard();loadRequests();
+ }catch(e){msg.textContent=e.message}
+}
+function showDashboard(){document.getElementById("login").style.display="none";document.getElementById("dashboard").style.display="block"}
+async function loadRequests(){
+ try{
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/requests?select=*&order=created_at.desc`,{headers:headers()});
+  if(!r.ok) throw new Error(await r.text());
+  const data=await r.json(); render(data);
+ }catch(e){document.getElementById("requests").innerHTML=`<div class="request">Could not load requests. ${escapeHtml(e.message)}</div>`}
+}
+function render(data){
+ document.getElementById("all").textContent=data.length;
+ document.getElementById("pending").textContent=data.filter(x=>x.status==="Pending").length;
+ document.getElementById("progress").textContent=data.filter(x=>x.status==="In Progress").length;
+ document.getElementById("done").textContent=data.filter(x=>x.status==="Completed").length;
+ const box=document.getElementById("requests");box.innerHTML="";
+ if(!data.length){box.innerHTML='<div class="request muted">No requests yet.</div>';return}
+ data.forEach(x=>{const el=document.createElement("div");el.className="request";el.innerHTML=`
+ <div class="top"><h3>${escapeHtml(x.service_needed)}</h3><span class="badge">${escapeHtml(x.status)}</span></div>
+ <p><b>Client:</b> ${escapeHtml(x.client_name)}</p>
+<p><b>NEXORA User ID:</b> <code>${escapeHtml(x.user_id||"—")}</code></p>
+ <p><b>Discord:</b> ${escapeHtml(x.discord_username)}</p>
+ <p><b>Server:</b> ${escapeHtml(x.server_type)} &nbsp; <b>Budget:</b> ${escapeHtml(x.budget)}</p>
+ <p><b>Details:</b> ${escapeHtml(x.details)}</p>
+ <p class="muted">${new Date(x.created_at).toLocaleString()}</p>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
+ <select id="s-${x.id}"><option ${x.status==="Pending"?"selected":""}>Pending</option><option ${x.status==="In Progress"?"selected":""}>In Progress</option><option ${x.status==="Completed"?"selected":""}>Completed</option><option ${x.status==="Cancelled"?"selected":""}>Cancelled</option></select>
+ <button class="primary" onclick="updateStatus('${x.id}')">Save Status</button>
+ <button class="danger" onclick="deleteRequest('${x.id}')">Delete</button>
+ </div>`;box.appendChild(el)})
+}
+async function updateStatus(id){const status=document.getElementById("s-"+id).value;const r=await fetch(`${SUPABASE_URL}/rest/v1/requests?id=eq.${id}`,{method:"PATCH",headers:{...headers(),"Prefer":"return=minimal"},body:JSON.stringify({status})});if(!r.ok)alert("Update failed");else loadRequests()}
+async function deleteRequest(id){if(!confirm("Delete this request?"))return;const r=await fetch(`${SUPABASE_URL}/rest/v1/requests?id=eq.${id}`,{method:"DELETE",headers:headers()});if(!r.ok)alert("Delete failed");else loadRequests()}
+function logout(){token=null;sessionStorage.removeItem("nexora_token");location.reload()}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+token=sessionStorage.getItem("nexora_token");if(token){showDashboard();loadRequests()}
+</script>
+</body></html>
