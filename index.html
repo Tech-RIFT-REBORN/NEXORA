@@ -1,315 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>NEXORA</title>
-
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#070910;
-  color:#fff;
-}
-
-nav{
-  height:70px;
-  padding:0 7%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid #202638;
-  background:#080b13;
-}
-
-.logo{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:3px;
-  color:#7282ff;
-}
-
-.container{
-  max-width:1050px;
-  margin:auto;
-  padding:60px 20px;
-}
-
-.hero{
-  text-align:center;
-  padding:40px 0 65px;
-}
-
-.hero h1{
-  font-size:65px;
-  margin-bottom:15px;
-}
-
-.hero p{
-  color:#9ca5bb;
-  font-size:18px;
-}
-
-.section{
-  margin-bottom:40px;
-}
-
-.section-title{
-  font-size:28px;
-  margin-bottom:15px;
-}
-
-.card{
-  background:#101522;
-  border:1px solid #242c40;
-  border-radius:15px;
-  padding:25px;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  padding:13px;
-  margin:7px 0;
-  border-radius:9px;
-  border:1px solid #293249;
-  background:#080c15;
-  color:white;
-  outline:none;
-}
-
-select{
-  cursor:pointer;
-}
-
-select option{
-  background:#080c15;
-  color:white;
-}
-
-textarea{
-  min-height:110px;
-  resize:vertical;
-}
-
-button{
-  padding:12px 18px;
-  border:0;
-  border-radius:9px;
-  background:#7282ff;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:8px;
-}
-
-button:hover{
-  opacity:.85;
-}
-
-.hint{
-  color:#8f99ae;
-  margin-bottom:15px;
-  line-height:1.5;
-}
-
-#generated{
-  display:none;
-}
-
-.generated-box{
-  background:#080c15;
-  border:1px solid #293249;
-  border-radius:12px;
-  padding:20px;
-}
-
-.generated-text{
-  white-space:pre-wrap;
-  color:#cbd2e3;
-  line-height:1.6;
-  margin-bottom:15px;
-}
-
-.copy-button{
-  background:#57d49e;
-  color:#07100c;
-}
-
-.success{
-  color:#57d49e;
-}
-
-.error{
-  color:#ff7373;
-}
-
-footer{
-  text-align:center;
-  padding:35px;
-  color:#626c82;
-  border-top:1px solid #202638;
-}
-</style>
-</head>
-
-<body>
-
-<nav>
-  <div class="logo">NEXORA</div>
-</nav>
-
-
-<div class="container">
-
-  <!-- HERO -->
-
-  <section class="hero">
-
-    <h1>NEXORA</h1>
-
-    <p>
-      Find experts. Raise requests. Get things done.
-    </p>
-
-  </section>
-
-
-  <!-- HIRE AN EXPERT -->
-
-  <section class="section">
-
-    <h2 class="section-title">
-      👨‍💻 Hire an Expert
-    </h2>
-
-    <div class="card">
-
-      <p class="hint">
-        Tell us what you need.
-        Your request will be turned into a message you can copy and send.
-        Use a username or nickname — don't enter your real name.
-      </p>
-
-      <input
-        id="name"
-        maxlength="30"
-        placeholder="Username / Nickname"
-      >
-
-      <input
-        id="title"
-        maxlength="80"
-        placeholder="What do you need help with?"
-      >
-
-      <textarea
-        id="description"
-        maxlength="500"
-        placeholder="Describe what you need..."
-      ></textarea>
-
-      <select id="budget">
-
-        <option value="" disabled selected>
-          Select your budget
-        </option>
-
-        <option value="1|95">
-          $1 — ₹95
-        </option>
-
-        <option value="5|475">
-          $5 — ₹475
-        </option>
-
-        <option value="10|950">
-          $10 — ₹950
-        </option>
-
-        <option value="15|1425">
-          $15 — ₹1,425
-        </option>
-
-        <option value="20|1900">
-          $20 — ₹1,900
-        </option>
-
-        <option value="25|2375">
-          $25 — ₹2,375
-        </option>
-
-        <option value="50|4750">
-          $50 — ₹4,750
-        </option>
-
-        <option value="100|9500">
-          $100 — ₹9,500
-        </option>
-
-      </select>
-
-      <button onclick="generateRequest()">
-        📢 Generate Request
-      </button>
-
-      <p id="message" style="margin-top:12px;"></p>
-
-    </div>
-
-  </section>
-
-
-  <!-- GENERATED REQUEST -->
-
-  <section class="section" id="generated">
-
-    <h2 class="section-title">
-      📋 Your Request
-    </h2>
-
-    <div class="generated-box">
-
-      <div
-        id="generatedText"
-        class="generated-text"
-      ></div>
-
-      <button
-        class="copy-button"
-        onclick="copyRequest()"
-      >
-        📋 Copy Request
-      </button>
-
-      <p
-        id="copyMessage"
-        style="margin-top:12px;"
-      ></p>
-
-    </div>
-
-  </section>
-
-</div>
-
-
-<footer>
-  NEXORA © 2026
-</footer>
-
-
 <script>
 
-let currentRequest = "";
+let currentRequest =
+  localStorage.getItem("nexoraCurrentRequest") || "";
+
+
+/* ======================================
+   LOAD SAVED REQUEST
+   ====================================== */
+
+function loadSavedRequest(){
+
+  if(!currentRequest) return;
+
+  document.getElementById("generatedText")
+    .textContent = currentRequest;
+
+  document.getElementById("generated")
+    .style.display = "block";
+}
 
 
 /* ======================================
@@ -381,10 +89,19 @@ ${description}
 ━━━━━━━━━━━━━━━━━━
 NEXORA`;
 
-  
+
+  /* SAVE REQUEST */
+
+  localStorage.setItem(
+    "nexoraCurrentRequest",
+    currentRequest
+  );
+
+
+  /* DISPLAY REQUEST */
+
   document.getElementById("generatedText")
     .textContent = currentRequest;
-
 
   document.getElementById("generated")
     .style.display = "block";
@@ -442,13 +159,17 @@ async function copyRequest(){
     copyMessage.className = "error";
 
     copyMessage.textContent =
-      "❌ Couldn't copy automatically. Please select and copy the text.";
+      "❌ Couldn't copy automatically.";
 
   }
 
 }
 
-</script>
 
-</body>
-</html>
+/* ======================================
+   START
+   ====================================== */
+
+loadSavedRequest();
+
+</script>
