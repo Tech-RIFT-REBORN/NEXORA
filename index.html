@@ -1,301 +1,265 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEXORA — Building Your Digital Presence</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-body{background:#080b14;color:#fff;min-height:100vh}
-#startup{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#202956,#0d1120 48%,#080b14 82%);transition:.7s}
-#startup.hide{opacity:0;transform:scale(1.04);pointer-events:none}.glow{position:absolute;width:480px;height:480px;border-radius:50%;background:#5865f2;filter:blur(180px);opacity:.2}
-.logo{position:relative;width:115px;height:115px;display:grid;place-items:center;border-radius:30px;background:linear-gradient(135deg,#5865f2,#7c3aed);font-size:55px;font-weight:bold;box-shadow:0 0 60px #5865f244}
-.start-title{position:relative;margin-top:25px;font-size:48px;letter-spacing:10px}.start-sub{position:relative;margin-top:12px;color:#9ca3af}
-button{cursor:pointer}.launch,.action{border:0;border-radius:10px;background:linear-gradient(135deg,#5865f2,#7c3aed);color:#fff;font-weight:bold}
-.launch{position:relative;margin-top:35px;padding:15px 35px}
-#app{display:flex;min-height:100vh}.sidebar{position:fixed;width:250px;height:100vh;padding:25px 15px;background:#0d111c;border-right:1px solid #202638}
-.brand{padding:10px 15px 30px;font-size:24px;font-weight:bold;letter-spacing:4px}.brand span{color:#818cf8}
-.nav button{width:100%;padding:13px 15px;margin:4px 0;border:0;border-radius:10px;background:transparent;color:#9ca3af;text-align:left}.nav button:hover,.nav button.active{background:#1a2035;color:#fff}
-.main{width:calc(100% - 250px);margin-left:250px;padding:45px}.page{display:none}.page.active{display:block;animation:fade .3s}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-h1{font-size:32px;margin-bottom:8px}.subtitle{color:#8b93a7;margin-bottom:30px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}.card,.panel{background:#101522;border:1px solid #202638;border-radius:16px}.card{padding:24px;transition:.2s}.card:hover{transform:translateY(-4px);border-color:#5865f2}.card-icon{font-size:30px;margin-bottom:15px}.card h3{margin-bottom:8px}.card p{color:#8991a5;font-size:13px;line-height:1.5}.card-button,.copy{margin-top:18px;padding:9px 14px;border:0;border-radius:8px;background:#252c3d;color:#fff}
-.panel{max-width:900px;padding:25px}label{display:block;margin:18px 0 7px;color:#aab0c0}input,select,textarea{width:100%;padding:13px;background:#090d16;color:#fff;border:1px solid #252c3d;border-radius:9px;outline:0}textarea{height:140px;resize:vertical}.action{margin-top:20px;padding:13px 20px}.output{min-height:100px;margin-top:20px;padding:18px;background:#090d16;border:1px solid #252c3d;border-radius:10px;white-space:pre-wrap}.copy{margin-top:10px}
-.price{margin-top:20px;padding:18px;background:#151b2b;border:1px solid #29314a;border-radius:10px;line-height:1.8}.price strong{color:#a5b4fc}
-.request-card{position:relative;padding:18px;margin:12px 0;background:#101522;border:1px solid #202638;border-radius:12px}.request-card p{margin:5px 0;color:#b1b8c7;font-size:13px}.status{display:inline-block;margin-top:10px;padding:5px 10px;border-radius:6px;background:#18243a;color:#93c5fd;font-size:11px}.delete{position:absolute;right:15px;top:15px;border:0;border-radius:6px;padding:6px 9px;background:#351b26;color:#fca5a5}.empty{padding:25px;text-align:center;color:#687086}
-#toast{position:fixed;bottom:25px;right:25px;padding:13px 18px;background:#171d30;border-radius:10px;opacity:0;transform:translateY(20px);transition:.3s}#toast.show{opacity:1;transform:none}
-@media(max-width:700px){.sidebar{width:70px;padding:20px 8px}.brand{font-size:0;text-align:center}.brand:after{content:"N";font-size:25px;color:#818cf8}.nav button{font-size:0;text-align:center}.nav button:first-letter{font-size:20px}.main{width:calc(100% - 70px);margin-left:70px;padding:25px}.start-title{font-size:34px}}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA</title>
 
-.account-box{margin:0 0 18px;padding:14px;background:#101522;border:1px solid #202638;border-radius:12px}
-.account-label{font-size:10px;letter-spacing:2px;color:#687086;margin-bottom:7px}
-#accountState{font-size:13px;color:#b1b8c7;margin-bottom:9px;overflow:hidden;text-overflow:ellipsis}
-.account-btn{width:100%;padding:9px;border:0;border-radius:8px;background:#252c3d;color:#fff;cursor:pointer}
-.account-btn:hover{background:#303951}
-.modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);padding:20px}
-.modal.show{display:grid}
-.auth-card{position:relative;width:min(430px,100%);padding:28px;background:#101522;border:1px solid #30384e;border-radius:18px;box-shadow:0 25px 80px #0008}
-.close-auth{position:absolute;right:16px;top:12px;border:0;background:transparent;color:#8991a5;font-size:28px;cursor:pointer}
-.auth-tabs{display:flex;gap:8px;margin-bottom:22px}
-.auth-tab{flex:1;padding:10px;border:0;border-radius:9px;background:#171d2c;color:#8991a5;cursor:pointer}
-.auth-tab.active{background:#252c3d;color:#fff}
-.auth-sub,.auth-note,.auth-msg{color:#8991a5;font-size:13px;line-height:1.5}
-.auth-card label{margin-top:14px}
-.auth-submit{width:100%;margin-top:20px}
-.auth-msg{min-height:20px;margin-top:12px}
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#080b14;
+  color:white;
+}
+nav{
+  padding:20px 7%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #20263a;
+}
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:3px;
+  color:#7180ff;
+}
+main{
+  max-width:900px;
+  margin:auto;
+  padding:70px 20px;
+  text-align:center;
+}
+h1{font-size:60px;margin:10px}
+.sub{color:#9aa3bb;font-size:18px}
+.card{
+  margin:30px auto;
+  padding:25px;
+  max-width:420px;
+  background:#101625;
+  border:1px solid #252d43;
+  border-radius:16px;
+}
+input{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  background:#080c16;
+  color:white;
+  border:1px solid #293149;
+  border-radius:9px;
+}
+button{
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:#7180ff;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin:5px;
+}
+.public{
+  margin:30px auto;
+  padding:30px;
+  background:#101625;
+  border:1px solid #252d43;
+  border-radius:16px;
+}
+.hidden{display:none}
+.msg{color:#9aa3bb;margin-top:10px}
 </style>
 </head>
+
 <body>
-<section id="startup"><div class="glow"></div><div class="logo">N</div><h1 class="start-title">NEXORA</h1><p class="start-sub">Building your digital presence.</p><button class="launch" id="launch">Launch NEXORA →</button></section>
 
-<div id="app">
-<aside class="sidebar"><div class="brand">NEX<span>ORA</span></div><div class="account-box" id="accountBox"><div class="account-label">ACCOUNT</div><div id="accountState">Not signed in</div><button class="account-btn" id="accountBtn" onclick="openAuth()">Sign in / Sign up</button></div><div class="nav">
-<button class="active" onclick="showPage('home',this)">🏠 Home</button>
-<button onclick="showPage('blueprint',this)">🛠️ Blueprint</button>
-<button onclick="showPage('channels',this)">#️⃣ Channels</button>
-<button onclick="showPage('roles',this)">🎭 Roles</button>
-<button onclick="showPage('announcement',this)">📢 Announcements</button>
-<button onclick="showPage('hire',this)">💼 Hire an Expert</button>
-<button onclick="showPage('about',this)">ℹ️ About</button>
-</div></aside>
+<nav>
+  <div class="logo">NEXORA</div>
+  <button id="logout" class="hidden">Sign Out</button>
+</nav>
 
-<main class="main">
-<section id="home" class="page active"><h1>Welcome to NEXORA 👋</h1><p class="subtitle">Your toolkit for building and organizing online communities.</p><div class="cards">
-<div class="card"><div class="card-icon">🛠️</div><h3>Blueprint Builder</h3><p>Generate a complete Discord server structure.</p><button class="card-button" onclick="openPage('blueprint')">Open Tool →</button></div>
-<div class="card"><div class="card-icon">#️⃣</div><h3>Channel Generator</h3><p>Create organized channel structures.</p><button class="card-button" onclick="openPage('channels')">Open Tool →</button></div>
-<div class="card"><div class="card-icon">🎭</div><h3>Role Generator</h3><p>Create a clean role hierarchy.</p><button class="card-button" onclick="openPage('roles')">Open Tool →</button></div>
-<div class="card"><div class="card-icon">📢</div><h3>Announcement Builder</h3><p>Create announcements ready for Discord.</p><button class="card-button" onclick="openPage('announcement')">Open Tool →</button></div>
-<div class="card"><div class="card-icon">💼</div><h3>Hire an Expert</h3><p>Request a custom Discord server setup.</p><button class="card-button" onclick="openPage('hire')">Hire an Expert →</button></div>
-</div></section>
+<main>
 
-<section id="blueprint" class="page"><h1>🛠️ Blueprint Builder</h1><p class="subtitle">Generate a starter Discord server structure.</p><div class="panel"><label>Server Type</label><select id="serverType"><option value="gaming">Gaming Community</option><option value="community">General Community</option><option value="developer">Developer Community</option><option value="creator">Creator Community</option></select><button class="action" onclick="generateBlueprint()">Generate Blueprint</button><div class="output" id="blueprintOutput">Choose a server type and generate your blueprint.</div><button class="copy" onclick="copyText('blueprintOutput')">Copy Blueprint</button></div></section>
+<h1>NEXORA</h1>
+<p class="sub">Connect. Build. Grow.</p>
 
-<section id="channels" class="page"><h1>#️⃣ Channel Generator</h1><p class="subtitle">Generate organized channels.</p><div class="panel"><label>Community Name</label><input id="communityName" placeholder="Example: NEXORA"><label>Community Type</label><select id="channelType"><option>Gaming</option><option>Community</option><option>Development</option><option>Creator</option></select><button class="action" onclick="generateChannels()">Generate Channels</button><div class="output" id="channelOutput">Your generated channels will appear here.</div><button class="copy" onclick="copyText('channelOutput')">Copy Channels</button></div></section>
+<!-- PUBLIC FOR EVERYONE -->
+<div class="public">
+  <h2>👨‍💻 Hire an Expert</h2>
+  <p class="sub">
+    Find skilled experts and explore available services.
+    No account required.
+  </p>
 
-<section id="roles" class="page"><h1>🎭 Role Generator</h1><p class="subtitle">Generate a role hierarchy.</p><div class="panel"><label>Server Size</label><select id="serverSize"><option value="small">Small Community</option><option value="medium">Medium Community</option><option value="large">Large Community</option></select><button class="action" onclick="generateRoles()">Generate Roles</button><div class="output" id="roleOutput">Your roles will appear here.</div><button class="copy" onclick="copyText('roleOutput')">Copy Roles</button></div></section>
-
-<section id="announcement" class="page"><h1>📢 Announcement Builder</h1><p class="subtitle">Create a formatted Discord announcement.</p><div class="panel"><label>Title</label><input id="announcementTitle" placeholder="Big Update!"><label>Message</label><textarea id="announcementMessage" placeholder="Write your announcement..."></textarea><button class="action" onclick="generateAnnouncement()">Generate Announcement</button><div class="output" id="announcementOutput">Your announcement will appear here.</div><button class="copy" onclick="copyText('announcementOutput')">Copy Announcement</button></div></section>
-
-<section id="hire" class="page"><h1>💼 Hire an Expert</h1><p class="subtitle">Send a setup request directly to NEXORA.</p><div class="panel">
-<label>Your Name *</label><input id="clientName" maxlength="80" placeholder="Your name">
-<label>Discord Username *</label><input id="discordUsername" maxlength="80" placeholder="username">
-<label>Server Type</label><select id="hireServerType"><option>Gaming</option><option>Community</option><option>Development</option><option>Creator</option><option>Other</option></select>
-<label>Service Needed</label><select id="serviceNeeded"><option>Basic Server Setup</option><option>Full Server Setup</option><option>Channels & Categories</option><option>Roles & Permissions</option><option>Server Organization</option><option>Custom Setup</option></select>
-<label>Budget</label><select id="budget"><option>$1 – $3</option><option>$3 – $6</option><option>$6 – $12</option><option>$12+</option><option>Custom / Discuss</option></select>
-<label>What do you need? *</label><textarea id="requestDetails" maxlength="2000" placeholder="Tell us what you want..."></textarea>
-<div class="price">💡 <strong>NEXORA Starting Prices</strong><br><br>Basic Setup: <strong>$1+</strong><br>Full Setup: <strong>$3+</strong><br>Advanced Setup: <strong>$6+</strong><br>Custom: <strong>Let's discuss</strong></div>
-<button class="action" onclick="submitRequest()">Submit Setup Request →</button>
-<p style="color:#70798d;font-size:12px;margin-top:12px">Your request is sent securely to the NEXORA database. Never enter passwords or private account information.</p>
-</div></section>
-
-<section id="about" class="page"><h1>ℹ️ About NEXORA</h1><p class="subtitle">Building your digital presence.</p><div class="panel"><h2 style="color:#818cf8;letter-spacing:6px">NEXORA</h2><br><p style="color:#b1b8c7;line-height:1.7">NEXORA helps people build and organize online communities with useful tools and optional custom setup services.</p></div></section>
-</main></div>
-
-<div id="authModal" class="modal">
-  <div class="auth-card">
-    <button class="close-auth" onclick="closeAuth()">×</button>
-    <div class="auth-tabs">
-      <button id="loginTab" class="auth-tab active" onclick="switchAuth('login')">Sign In</button>
-      <button id="signupTab" class="auth-tab" onclick="switchAuth('signup')">Sign Up</button>
-    </div>
-    <h2 id="authTitle">Welcome back</h2>
-    <p id="authSub" class="auth-sub">Sign in to your NEXORA account.</p>
-    <div id="signupFields" style="display:none">
-      <label>Username *</label>
-      <input id="authUsername" maxlength="40" placeholder="Your NEXORA username">
-    </div>
-    <label>Email *</label>
-    <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
-    <label>Password *</label>
-    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Your password">
-    <button class="action auth-submit" id="authSubmit" onclick="submitAuth()">Sign In →</button>
-    <p id="authMsg" class="auth-msg"></p>
-    <p class="auth-note">Your password is handled by Supabase Auth. Never share passwords or Discord tokens.</p>
-  </div>
+  <button onclick="alert('Expert marketplace coming soon!')">
+    View Experts
+  </button>
 </div>
 
-<div id="toast"></div>
+<!-- ACCOUNT -->
+<div class="card">
+
+  <h2 id="title">Sign In</h2>
+
+  <input
+    id="name"
+    class="hidden"
+    placeholder="Display name"
+  >
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+  >
+
+  <button id="submit" onclick="auth()">
+    Sign In
+  </button>
+
+  <button id="toggle" onclick="toggleMode()">
+    Create Account
+  </button>
+
+  <div id="msg" class="msg"></div>
+
+</div>
+
+</main>
 
 <script>
-const SUPABASE_URL="YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";
-let authMode="login";
-let session=null;
-let currentUser=null;
 
-document.getElementById("launch").onclick=()=>{
-  document.getElementById("startup").classList.add("hide");
-  setTimeout(()=>document.getElementById("startup").style.display="none",700)
-};
+/* =========================
+   SUPABASE CONFIG
+   ========================= */
 
-function showPage(id,b){
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
-  if(b)b.classList.add("active")
-}
-function openPage(id){
-  let b=[...document.querySelectorAll(".nav button")].find(x=>x.getAttribute("onclick")?.includes("'"+id+"'"));
-  showPage(id,b)
-}
-function generateBlueprint(){
-  const t=document.getElementById("serverType").value;
-  document.getElementById("blueprintOutput").textContent=({
-    gaming:`📁 INFORMATION\n# rules\n# announcements\n# updates\n\n📁 COMMUNITY\n# general\n# media\n# memes\n\n📁 GAMING\n# game-chat\n# clips\n# strategies\n\n📁 VOICE\n🔊 General\n🔊 Squad 1`,
-    community:`📁 INFORMATION\n# rules\n# announcements\n# introductions\n\n📁 COMMUNITY\n# general\n# media\n# off-topic\n# suggestions\n\n📁 VOICE\n🔊 General\n🔊 Chill`,
-    developer:`📁 INFORMATION\n# rules\n# announcements\n\n📁 DEVELOPMENT\n# coding\n# projects\n# showcase\n# help\n\n📁 VOICE\n🔊 Dev Talk`,
-    creator:`📁 INFORMATION\n# announcements\n# rules\n\n📁 CREATOR HUB\n# content\n# showcase\n# collaborations\n\n📁 COMMUNITY\n# general\n# media`
-  })[t]
-}
-function generateChannels(){
-  let n=document.getElementById("communityName").value.trim()||"YOUR SERVER",t=document.getElementById("channelType").value;
-  document.getElementById("channelOutput").textContent=`━━━ ${n.toUpperCase()} ━━━\n\n📌 INFORMATION\n# rules\n# announcements\n# server-info\n\n💬 ${t.toUpperCase()}\n# general\n# discussions\n# showcase\n\n🎉 COMMUNITY\n# media\n# memes\n# off-topic\n\n🔊 VOICE\n🔊 General\n🔊 Chill`
-}
-function generateRoles(){
-  let r={
-    small:`👑 Owner\n⚡ Administrator\n🛡️ Moderator\n✨ Member`,
-    medium:`👑 Owner\n🚀 Co-Owner\n⚡ Administrator\n🛡️ Head Moderator\n🔨 Moderator\n✨ Member\n🌱 New Member`,
-    large:`👑 Owner\n🚀 Director\n⚡ Administrator\n🛡️ Senior Moderator\n🔨 Moderator\n🎫 Support Team\n⭐ VIP\n✨ Member\n🌱 New Member`
-  };
-  document.getElementById("roleOutput").textContent=r[document.getElementById("serverSize").value]
-}
-function generateAnnouncement(){
-  let t=document.getElementById("announcementTitle").value.trim()||"ANNOUNCEMENT",
-      m=document.getElementById("announcementMessage").value.trim()||"Your announcement message goes here.";
-  document.getElementById("announcementOutput").textContent=`📢 ${t.toUpperCase()}\n\n${m}\n\n━━━━━━━━━━━━━━\n🚀 NEXORA\nBuilding your digital presence.`
-}
-async function copyText(id){
-  try{await navigator.clipboard.writeText(document.getElementById(id).textContent);toast("Copied!")}
-  catch{toast("Copy failed.")}
-}
-function toast(m){
-  let t=document.getElementById("toast");
-  t.textContent=m;t.classList.add("show");clearTimeout(window.tt);
-  window.tt=setTimeout(()=>t.classList.remove("show"),2500)
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================
+   AUTH
+   ========================= */
+
+let signup = false;
+
+function toggleMode(){
+
+  signup = !signup;
+
+  document.getElementById("title").textContent =
+    signup ? "Sign Up" : "Sign In";
+
+  document.getElementById("submit").textContent =
+    signup ? "Sign Up" : "Sign In";
+
+  document.getElementById("toggle").textContent =
+    signup
+      ? "Already have an account? Sign In"
+      : "Create Account";
+
+  document.getElementById("name")
+    .classList.toggle("hidden", !signup);
+
+  document.getElementById("msg").textContent = "";
 }
 
-function openAuth(mode="login"){
-  switchAuth(mode);
-  document.getElementById("authModal").classList.add("show");
-  setTimeout(()=>document.getElementById("authEmail").focus(),50);
-}
-function closeAuth(){document.getElementById("authModal").classList.remove("show")}
-function switchAuth(mode){
-  authMode=mode;
-  document.getElementById("loginTab").classList.toggle("active",mode==="login");
-  document.getElementById("signupTab").classList.toggle("active",mode==="signup");
-  document.getElementById("signupFields").style.display=mode==="signup"?"block":"none";
-  document.getElementById("authTitle").textContent=mode==="signup"?"Create your NEXORA account":"Welcome back";
-  document.getElementById("authSub").textContent=mode==="signup"?"Join NEXORA and keep your requests connected to your account.":"Sign in to your NEXORA account.";
-  document.getElementById("authSubmit").textContent=mode==="signup"?"Create Account →":"Sign In →";
-  document.getElementById("authMsg").textContent="";
-  document.getElementById("authPassword").autocomplete=mode==="signup"?"new-password":"current-password";
-}
 
-async function submitAuth(){
-  if(SUPABASE_URL.startsWith("YOUR_")||SUPABASE_ANON_KEY.startsWith("YOUR_")){
-    document.getElementById("authMsg").textContent="Connect Supabase first.";
+async function auth(){
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const msg =
+    document.getElementById("msg");
+
+  if(!email || !password){
+    msg.textContent = "Enter your email and password.";
     return;
   }
-  const email=document.getElementById("authEmail").value.trim();
-  const password=document.getElementById("authPassword").value;
-  const msg=document.getElementById("authMsg");
-  msg.textContent="";
-  if(!email||!password){msg.textContent="Enter your email and password.";return}
 
-  try{
-    if(authMode==="signup"){
-      const username=document.getElementById("authUsername").value.trim();
-      if(!username){msg.textContent="Choose a username.";return}
-      const r=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{
-        method:"POST",
-        headers:{"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
-        body:JSON.stringify({email,password,data:{username}})
-      });
-      const d=await r.json();
-      if(!r.ok) throw new Error(d.error_description||d.msg||d.message||"Sign up failed");
-      if(d.access_token){
-        session=d;currentUser=d.user;saveSession();updateAccountUI();closeAuth();toast("Account created! 🚀");
-      }else{
-        msg.textContent="Account created. Check your email if confirmation is required, then sign in.";
+  if(signup){
+
+    const name =
+      document.getElementById("name").value.trim();
+
+    const {error} = await sb.auth.signUp({
+      email: email,
+      password: password,
+      options:{
+        data:{
+          display_name: name || "Player"
+        }
       }
-    }else{
-      const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
-        method:"POST",
-        headers:{"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
-        body:JSON.stringify({email,password})
-      });
-      const d=await r.json();
-      if(!r.ok) throw new Error(d.error_description||d.msg||d.message||"Sign in failed");
-      session=d;currentUser=d.user;saveSession();updateAccountUI();closeAuth();toast("Signed in! 👋");
-    }
-  }catch(e){msg.textContent=e.message}
-}
+    });
 
-function saveSession(){
-  if(session) localStorage.setItem("nexora_session",JSON.stringify(session));
-}
-function loadSession(){
-  try{
-    const raw=localStorage.getItem("nexora_session");
-    if(raw){session=JSON.parse(raw);currentUser=session.user||null}
-  }catch{session=null;currentUser=null}
-  updateAccountUI();
-}
-function signOut(){
-  session=null;currentUser=null;localStorage.removeItem("nexora_session");
-  updateAccountUI();toast("Signed out.");
-}
-function updateAccountUI(){
-  const state=document.getElementById("accountState"),btn=document.getElementById("accountBtn");
-  if(currentUser){
-    const username=currentUser.user_metadata?.username||currentUser.email?.split("@")[0]||"NEXORA User";
-    state.textContent="Signed in as "+username;
-    btn.textContent="Sign out";
-    btn.onclick=signOut;
+    msg.textContent =
+      error
+        ? error.message
+        : "Account created! Check your email if confirmation is enabled.";
+
   }else{
-    state.textContent="Not signed in";
-    btn.textContent="Sign in / Sign up";
-    btn.onclick=()=>openAuth("login");
+
+    const {error} =
+      await sb.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    msg.textContent =
+      error
+        ? error.message
+        : "Signed in successfully!";
   }
 }
 
-async function submitRequest(){
-  if(SUPABASE_URL.startsWith("YOUR_")||SUPABASE_ANON_KEY.startsWith("YOUR_")){toast("Connect Supabase first.");return}
-  if(!session||!currentUser){toast("Sign in to submit a request.");openAuth("login");return}
-  const name=document.getElementById("clientName").value.trim(),
-        discord=document.getElementById("discordUsername").value.trim(),
-        details=document.getElementById("requestDetails").value.trim();
-  if(!name||!discord||!details){toast("Fill in the required fields.");return}
 
-  const payload={
-    user_id:currentUser.id,
-    client_name:name,
-    discord_username:discord,
-    server_type:document.getElementById("hireServerType").value,
-    service_needed:document.getElementById("serviceNeeded").value,
-    budget:document.getElementById("budget").value,
-    details
-  };
-  try{
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/requests`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "apikey":SUPABASE_ANON_KEY,
-        "Authorization":`Bearer ${session.access_token}`,
-        "Prefer":"return=minimal"
-      },
-      body:JSON.stringify(payload)
-    });
-    if(!res.ok) throw new Error(await res.text());
-    document.getElementById("clientName").value="";
-    document.getElementById("discordUsername").value="";
-    document.getElementById("requestDetails").value="";
-    toast("Request sent to NEXORA! 🚀");
-  }catch(e){console.error(e);toast("Could not send request. Check your Supabase setup.")}
+/* =========================
+   SESSION
+   ========================= */
+
+async function checkUser(){
+
+  const {data:{user}} =
+    await sb.auth.getUser();
+
+  if(user){
+
+    const logout =
+      document.getElementById("logout");
+
+    logout.classList.remove("hidden");
+
+    logout.onclick = async () => {
+      await sb.auth.signOut();
+      location.reload();
+    };
+  }
 }
 
-loadSession();
+checkUser();
 
 </script>
+
 </body>
 </html>
+```
