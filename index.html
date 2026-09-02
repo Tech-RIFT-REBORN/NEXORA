@@ -3,11 +3,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>NEXORA</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -19,7 +17,7 @@
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:#070910;
-  color:white;
+  color:#fff;
 }
 
 nav{
@@ -39,24 +37,6 @@ nav{
   color:#7282ff;
 }
 
-.nav-buttons button{
-  margin-left:8px;
-}
-
-button{
-  padding:11px 18px;
-  border:none;
-  border-radius:9px;
-  background:#7282ff;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{
-  opacity:.85;
-}
-
 .container{
   max-width:1050px;
   margin:auto;
@@ -65,7 +45,7 @@ button:hover{
 
 .hero{
   text-align:center;
-  padding:40px 0 70px;
+  padding:40px 0 65px;
 }
 
 .hero h1{
@@ -79,12 +59,12 @@ button:hover{
 }
 
 .section{
-  margin-bottom:35px;
+  margin-bottom:40px;
 }
 
 .section-title{
-  margin-bottom:15px;
   font-size:28px;
+  margin-bottom:15px;
 }
 
 .card{
@@ -94,29 +74,8 @@ button:hover{
   padding:25px;
 }
 
-.expert-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-}
-
-.expert{
-  background:#0d121e;
-  border:1px solid #252d40;
-  border-radius:12px;
-  padding:18px;
-}
-
-.expert h3{
-  margin-bottom:8px;
-}
-
-.expert p{
-  color:#9da6ba;
-  margin-bottom:8px;
-}
-
-input,textarea,select{
+input,
+textarea{
   width:100%;
   padding:13px;
   margin:7px 0;
@@ -128,45 +87,73 @@ input,textarea,select{
 }
 
 textarea{
-  min-height:100px;
+  min-height:110px;
   resize:vertical;
 }
 
-.form-buttons{
+button{
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:#7282ff;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
   margin-top:8px;
 }
 
-.hidden{
-  display:none!important;
+button:hover{
+  opacity:.85;
 }
 
-.message{
-  margin-top:12px;
-  color:#9da6bb;
+.hint{
+  color:#8f99ae;
+  margin-bottom:15px;
+  line-height:1.5;
 }
 
-.modal{
-  position:fixed;
-  inset:0;
-  background:#000b;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+#requests{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:15px;
+}
+
+.request{
+  background:#101522;
+  border:1px solid #242c40;
+  border-radius:14px;
   padding:20px;
 }
 
-.modal-box{
-  width:100%;
-  max-width:420px;
-  background:#101522;
-  border:1px solid #293249;
-  border-radius:15px;
-  padding:25px;
+.request h3{
+  margin-bottom:10px;
 }
 
-.close{
-  float:right;
-  background:#252c3d;
+.request p{
+  color:#a5aec1;
+  line-height:1.5;
+  margin:7px 0;
+}
+
+.budget{
+  display:inline-block;
+  margin-top:10px;
+  padding:7px 11px;
+  border-radius:8px;
+  background:#17251f;
+  color:#57d49e;
+  font-weight:bold;
+}
+
+.time{
+  display:block;
+  margin-top:12px;
+  color:#66718a;
+  font-size:12px;
+}
+
+.empty{
+  color:#818ba0;
 }
 
 footer{
@@ -181,38 +168,26 @@ footer{
 <body>
 
 <nav>
-
-  <div class="logo">
-    NEXORA
-  </div>
-
-  <div class="nav-buttons">
-    <button onclick="openAuth('signin')">
-      Sign In
-    </button>
-
-    <button onclick="openAuth('signup')">
-      Create Account
-    </button>
-  </div>
-
+  <div class="logo">NEXORA</div>
 </nav>
 
 
 <div class="container">
+
+  <!-- HERO -->
 
   <section class="hero">
 
     <h1>NEXORA</h1>
 
     <p>
-      Connect with people, hire experts, and showcase your skills.
+      Find experts. Raise requests. Get things done.
     </p>
 
   </section>
 
 
-  <!-- PUBLIC HIRE EXPERT -->
+  <!-- HIRE AN EXPERT -->
 
   <section class="section">
 
@@ -222,53 +197,61 @@ footer{
 
     <div class="card">
 
-      <p style="color:#9da6ba;margin-bottom:15px;">
-        Looking for help? Post what you need and let people find your request.
-        This section is public — no account required.
+      <p class="hint">
+        Tell the NEXORA community what you need.
+        Your request will appear publicly.
+        Use a username or nickname — don't enter your real name.
       </p>
 
       <input
-        id="hireTitle"
+        id="name"
+        maxlength="30"
+        placeholder="What's your name? (Username, not real name)"
+      >
+
+      <input
+        id="title"
+        maxlength="80"
         placeholder="What do you need help with?"
       >
 
       <textarea
-        id="hireDescription"
-        placeholder="Describe the job..."
+        id="description"
+        maxlength="500"
+        placeholder="Describe what you need..."
       ></textarea>
 
       <input
-        id="hireContact"
-        placeholder="How can people contact you?"
+        id="budget"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Budget ($)"
       >
 
-      <button onclick="submitHire()">
-        Post Request
+      <button onclick="raiseRequest()">
+        📢 Raise Request
       </button>
 
-      <div id="hireMessage" class="message"></div>
+      <p
+        id="message"
+        style="margin-top:12px;color:#8f99ae;"
+      ></p>
 
     </div>
 
   </section>
 
 
-  <!-- PUBLIC POSTS -->
+  <!-- PUBLIC REQUESTS -->
 
   <section class="section">
 
     <h2 class="section-title">
-      🌐 Public Expert Requests
+      🌐 Public Requests
     </h2>
 
-    <div
-      id="expertList"
-      class="expert-grid"
-    >
-      <p style="color:#8f99ae;">
-        Loading...
-      </p>
-    </div>
+    <div id="requests"></div>
 
   </section>
 
@@ -280,382 +263,157 @@ footer{
 </footer>
 
 
-<!-- AUTH MODAL -->
-
-<div id="authModal" class="modal hidden">
-
-  <div class="modal-box">
-
-    <button
-      class="close"
-      onclick="closeAuth()"
-    >
-      ✕
-    </button>
-
-    <h2 id="authTitle">
-      Sign In
-    </h2>
-
-    <br>
-
-    <input
-      id="authName"
-      class="hidden"
-      placeholder="Display Name"
-    >
-
-    <input
-      id="authEmail"
-      type="email"
-      placeholder="Email"
-    >
-
-    <input
-      id="authPassword"
-      type="password"
-      placeholder="Password"
-    >
-
-    <button onclick="submitAuth()">
-      <span id="authButton">
-        Sign In
-      </span>
-    </button>
-
-    <button
-      style="background:#242c3d"
-      onclick="switchAuth()"
-    >
-      <span id="switchText">
-        Create Account
-      </span>
-    </button>
-
-    <div
-      id="authMessage"
-      class="message"
-    ></div>
-
-  </div>
-
-</div>
-
-
 <script>
 
-/* =========================================
-   SUPABASE
-   ========================================= */
+/* ======================================
+   RAISE REQUEST
+   ====================================== */
 
-const SUPABASE_URL =
-"YOUR_SUPABASE_URL";
+function raiseRequest(){
 
-const SUPABASE_KEY =
-"YOUR_SUPABASE_ANON_KEY";
-
-const db =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-/* =========================================
-   AUTH
-   ========================================= */
-
-let authMode = "signin";
-
-
-function openAuth(mode){
-
-  authMode = mode;
-
-  document
-    .getElementById("authModal")
-    .classList.remove("hidden");
-
-  updateAuthUI();
-}
-
-
-function closeAuth(){
-
-  document
-    .getElementById("authModal")
-    .classList.add("hidden");
-}
-
-
-function switchAuth(){
-
-  authMode =
-    authMode === "signin"
-      ? "signup"
-      : "signin";
-
-  updateAuthUI();
-}
-
-
-function updateAuthUI(){
-
-  const signup =
-    authMode === "signup";
-
-  document.getElementById("authTitle")
-    .textContent =
-      signup
-        ? "Create Account"
-        : "Sign In";
-
-  document.getElementById("authButton")
-    .textContent =
-      signup
-        ? "Create Account"
-        : "Sign In";
-
-  document.getElementById("switchText")
-    .textContent =
-      signup
-        ? "Already have an account?"
-        : "Create Account";
-
-  document.getElementById("authName")
-    .classList.toggle(
-      "hidden",
-      !signup
-    );
-
-  document.getElementById("authMessage")
-    .textContent = "";
-}
-
-
-async function submitAuth(){
-
-  const email =
-    document.getElementById("authEmail")
+  const name =
+    document.getElementById("name")
       .value.trim();
 
-  const password =
-    document.getElementById("authPassword")
-      .value;
-
-  const message =
-    document.getElementById("authMessage");
-
-
-  if(!email || !password){
-
-    message.textContent =
-      "Please enter your email and password.";
-
-    return;
-  }
-
-
-  if(authMode === "signup"){
-
-    const name =
-      document.getElementById("authName")
-        .value.trim();
-
-    const {data,error} =
-      await db.auth.signUp({
-
-        email:email,
-
-        password:password,
-
-        options:{
-          data:{
-            display_name:
-              name || "Player"
-          }
-        }
-
-      });
-
-
-    if(error){
-
-      message.textContent =
-        error.message;
-
-      return;
-    }
-
-
-    message.textContent =
-      data.session
-        ? "Account created!"
-        : "Account created! Check your email.";
-
-  }
-
-
-  else{
-
-    const {error} =
-      await db.auth.signInWithPassword({
-
-        email:email,
-
-        password:password
-
-      });
-
-
-    if(error){
-
-      message.textContent =
-        error.message;
-
-      return;
-    }
-
-
-    message.textContent =
-      "Signed in successfully!";
-
-  }
-
-}
-
-
-/* =========================================
-   HIRE AN EXPERT
-   ========================================= */
-
-async function submitHire(){
-
   const title =
-    document.getElementById("hireTitle")
+    document.getElementById("title")
       .value.trim();
 
   const description =
-    document.getElementById("hireDescription")
+    document.getElementById("description")
       .value.trim();
 
-  const contact =
-    document.getElementById("hireContact")
+  const budget =
+    document.getElementById("budget")
       .value.trim();
 
   const message =
-    document.getElementById("hireMessage");
+    document.getElementById("message");
 
 
-  if(!title || !description || !contact){
+  if(!name || !title || !description || !budget){
 
     message.textContent =
-      "Please fill in all fields.";
+      "⚠️ Please fill in every field.";
 
     return;
   }
 
 
-  const {error} =
-    await db
-      .from("expert_requests")
-      .insert({
-
-        title:title,
-
-        description:description,
-
-        contact:contact
-
-      });
-
-
-  if(error){
+  if(Number(budget) < 0){
 
     message.textContent =
-      error.message;
+      "⚠️ Budget cannot be negative.";
 
     return;
   }
+
+
+  const request = {
+
+    name:name,
+
+    title:title,
+
+    description:description,
+
+    budget:Number(budget).toFixed(2),
+
+    time:new Date().toLocaleString()
+
+  };
+
+
+  const requests =
+    JSON.parse(
+      localStorage.getItem("nexoraRequests")
+      || "[]"
+    );
+
+
+  requests.unshift(request);
+
+
+  localStorage.setItem(
+    "nexoraRequests",
+    JSON.stringify(requests)
+  );
+
+
+  document.getElementById("name").value="";
+  document.getElementById("title").value="";
+  document.getElementById("description").value="";
+  document.getElementById("budget").value="";
 
 
   message.textContent =
-    "Your request is now public!";
+    "✅ Your request has been posted!";
 
 
-  document.getElementById("hireTitle")
-    .value = "";
-
-  document.getElementById("hireDescription")
-    .value = "";
-
-  document.getElementById("hireContact")
-    .value = "";
-
-
-  loadExperts();
-
+  showRequests();
 }
 
 
-/* =========================================
-   LOAD PUBLIC REQUESTS
-   ========================================= */
+/* ======================================
+   SHOW REQUESTS
+   ====================================== */
 
-async function loadExperts(){
+function showRequests(){
 
-  const list =
-    document.getElementById("expertList");
-
-
-  const {data,error} =
-    await db
-      .from("expert_requests")
-      .select("*")
-      .order("created_at",{ascending:false});
+  const box =
+    document.getElementById("requests");
 
 
-  if(error){
-
-    list.innerHTML =
-      "<p style='color:#ff7185'>Could not load requests.</p>";
-
-    return;
-  }
+  const requests =
+    JSON.parse(
+      localStorage.getItem("nexoraRequests")
+      || "[]"
+    );
 
 
-  if(!data || data.length === 0){
+  if(requests.length === 0){
 
-    list.innerHTML =
-      "<p style='color:#8f99ae'>No requests yet.</p>";
+    box.innerHTML =
+      '<p class="empty">No requests yet. Be the first!</p>';
 
     return;
   }
 
 
-  list.innerHTML =
-    data.map(item => `
+  box.innerHTML =
+    requests.map(request => `
 
-      <div class="expert">
+      <div class="request">
 
         <h3>
-          ${escapeHTML(item.title)}
+          ${escapeHTML(request.title)}
         </h3>
 
         <p>
-          ${escapeHTML(item.description)}
+          👤 <b>${escapeHTML(request.name)}</b>
         </p>
 
-        <small style="color:#7182ff;">
-          Contact: ${escapeHTML(item.contact)}
-        </small>
+        <p>
+          ${escapeHTML(request.description)}
+        </p>
+
+        <span class="budget">
+          💵 $${escapeHTML(request.budget)}
+        </span>
+
+        <span class="time">
+          Posted ${escapeHTML(request.time)}
+        </span>
 
       </div>
 
     `).join("");
-
 }
 
+
+/* ======================================
+   SECURITY
+   ====================================== */
 
 function escapeHTML(text){
 
@@ -669,11 +427,11 @@ function escapeHTML(text){
 }
 
 
-/* =========================================
-   START
-   ========================================= */
+/* ======================================
+   LOAD
+   ====================================== */
 
-loadExperts();
+showRequests();
 
 </script>
 
