@@ -1,61 +1,322 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-let currentRequest =
-  localStorage.getItem("nexoraCurrentRequest") || "";
+<title>NEXORA</title>
 
-
-/* ======================================
-   LOAD SAVED REQUEST
-   ====================================== */
-
-function loadSavedRequest(){
-
-  if(!currentRequest) return;
-
-  document.getElementById("generatedText")
-    .textContent = currentRequest;
-
-  document.getElementById("generated")
-    .style.display = "block";
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#070910;
+  color:#fff;
+}
 
-/* ======================================
-   GENERATE REQUEST
-   ====================================== */
+nav{
+  height:70px;
+  padding:0 7%;
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid #202638;
+  background:#080b13;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:3px;
+  color:#7282ff;
+}
+
+.container{
+  max-width:1050px;
+  margin:auto;
+  padding:60px 20px;
+}
+
+.hero{
+  text-align:center;
+  padding:40px 0 65px;
+}
+
+.hero h1{
+  font-size:65px;
+  margin-bottom:15px;
+}
+
+.hero p{
+  color:#9ca5bb;
+  font-size:18px;
+}
+
+.section{
+  margin-bottom:40px;
+}
+
+.section-title{
+  font-size:28px;
+  margin-bottom:15px;
+}
+
+.card{
+  background:#101522;
+  border:1px solid #242c40;
+  border-radius:15px;
+  padding:25px;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border-radius:9px;
+  border:1px solid #293249;
+  background:#080c15;
+  color:white;
+  outline:none;
+}
+
+select{
+  cursor:pointer;
+}
+
+select option{
+  background:#080c15;
+  color:white;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+button{
+  padding:12px 18px;
+  border:0;
+  border-radius:9px;
+  background:#7282ff;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+button:hover{
+  opacity:.85;
+}
+
+.hint{
+  color:#8f99ae;
+  margin-bottom:15px;
+  line-height:1.5;
+}
+
+#generated{
+  margin-top:20px;
+}
+
+.generated-card{
+  background:#0b101c;
+  border:1px solid #303a55;
+  border-radius:14px;
+  padding:20px;
+}
+
+.generated-card pre{
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#dce1ef;
+  line-height:1.6;
+  font-size:14px;
+}
+
+.copy-button{
+  margin-top:15px;
+}
+
+.hidden{
+  display:none;
+}
+
+.message{
+  margin-top:12px;
+  color:#8f99ae;
+  line-height:1.5;
+}
+
+footer{
+  text-align:center;
+  padding:35px;
+  color:#626c82;
+  border-top:1px solid #202638;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">NEXORA</div>
+</nav>
+
+
+<div class="container">
+
+  <section class="hero">
+
+    <h1>NEXORA</h1>
+
+    <p>
+      Find experts. Raise requests. Get things done.
+    </p>
+
+  </section>
+
+
+  <section class="section">
+
+    <h2 class="section-title">
+      👨‍💻 Hire an Expert
+    </h2>
+
+    <div class="card">
+
+      <p class="hint">
+        Create a request for your project.
+        Enter your Discord username so you can be contacted.
+      </p>
+
+      <input
+        id="name"
+        maxlength="40"
+        placeholder="What's your Discord username?"
+      >
+
+      <input
+        id="title"
+        maxlength="80"
+        placeholder="What do you need help with?"
+      >
+
+      <textarea
+        id="description"
+        maxlength="500"
+        placeholder="Describe what you need..."
+      ></textarea>
+
+      <select id="budget">
+
+        <option value="" disabled selected>
+          Select your budget
+        </option>
+
+        <option value="1" data-inr="95">
+          $1 — ₹95
+        </option>
+
+        <option value="5" data-inr="475">
+          $5 — ₹475
+        </option>
+
+        <option value="10" data-inr="950">
+          $10 — ₹950
+        </option>
+
+        <option value="15" data-inr="1425">
+          $15 — ₹1,425
+        </option>
+
+        <option value="20" data-inr="1900">
+          $20 — ₹1,900
+        </option>
+
+        <option value="25" data-inr="2375">
+          $25 — ₹2,375
+        </option>
+
+        <option value="50" data-inr="4750">
+          $50 — ₹4,750
+        </option>
+
+        <option value="100" data-inr="9500">
+          $100 — ₹9,500
+        </option>
+
+      </select>
+
+      <button onclick="generateRequest()">
+        📢 Generate Request
+      </button>
+
+      <p id="message" class="message"></p>
+
+    </div>
+
+  </section>
+
+
+  <section id="generated" class="section hidden">
+
+    <h2 class="section-title">
+      📋 Your Request
+    </h2>
+
+    <div class="generated-card">
+
+      <pre id="requestText"></pre>
+
+      <button
+        class="copy-button"
+        onclick="copyRequest()"
+      >
+        📋 Copy Request
+      </button>
+
+      <p id="copyMessage" class="message"></p>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<footer>
+  NEXORA © 2026
+</footer>
+
+
+<script>
 
 function generateRequest(){
 
   const name =
-    document.getElementById("name")
-      .value.trim();
+    document.getElementById("name").value.trim();
 
   const title =
-    document.getElementById("title")
-      .value.trim();
+    document.getElementById("title").value.trim();
 
   const description =
-    document.getElementById("description")
-      .value.trim();
+    document.getElementById("description").value.trim();
 
   const budgetSelect =
     document.getElementById("budget");
-
-  const budgetValue =
-    budgetSelect.value;
 
   const message =
     document.getElementById("message");
 
 
-  if(
-    !name ||
-    !title ||
-    !description ||
-    !budgetValue
-  ){
-
-    message.className = "error";
+  if(!name || !title || !description || !budgetSelect.value){
 
     message.textContent =
       "⚠️ Please fill in every field.";
@@ -64,20 +325,22 @@ function generateRequest(){
   }
 
 
-  const parts =
-    budgetValue.split("|");
+  const selectedOption =
+    budgetSelect.options[
+      budgetSelect.selectedIndex
+    ];
 
   const usd =
-    parts[0];
+    budgetSelect.value;
 
   const inr =
-    parts[1];
+    selectedOption.dataset.inr;
 
 
-  currentRequest =
+  const requestText =
 `📢 NEXORA REQUEST
 
-👤 Username: ${name}
+👤 Discord Username: ${name}
 
 🛠️ Need: ${title}
 
@@ -90,86 +353,79 @@ ${description}
 NEXORA`;
 
 
-  /* SAVE REQUEST */
-
   localStorage.setItem(
-    "nexoraCurrentRequest",
-    currentRequest
+    "nexoraGeneratedRequest",
+    requestText
   );
 
 
-  /* DISPLAY REQUEST */
+  displayRequest(requestText);
 
-  document.getElementById("generatedText")
-    .textContent = currentRequest;
-
-  document.getElementById("generated")
-    .style.display = "block";
-
-
-  message.className = "success";
 
   message.textContent =
-    "✅ Request generated!";
-
-
-  document.getElementById("generated")
-    .scrollIntoView({
-      behavior:"smooth"
-    });
+    "✅ Request generated! A user - techgamer_28894 is gonna contact you on Discord.";
 }
 
 
-/* ======================================
-   COPY REQUEST
-   ====================================== */
+function displayRequest(text){
 
-async function copyRequest(){
+  const generated =
+    document.getElementById("generated");
+
+  const requestText =
+    document.getElementById("requestText");
+
+  requestText.textContent = text;
+
+  generated.classList.remove("hidden");
+}
+
+
+function copyRequest(){
+
+  const text =
+    document.getElementById("requestText").textContent;
 
   const copyMessage =
     document.getElementById("copyMessage");
 
 
-  if(!currentRequest){
+  navigator.clipboard.writeText(text)
+    .then(function(){
 
-    copyMessage.className = "error";
+      copyMessage.textContent =
+        "✅ Request copied!";
 
-    copyMessage.textContent =
-      "⚠️ Generate a request first.";
+    })
+    .catch(function(){
 
-    return;
-  }
+      copyMessage.textContent =
+        "⚠️ Couldn't copy automatically. Select and copy the text.";
+
+    });
+}
 
 
-  try{
+function loadSavedRequest(){
 
-    await navigator.clipboard.writeText(
-      currentRequest
+  const saved =
+    localStorage.getItem(
+      "nexoraGeneratedRequest"
     );
 
 
-    copyMessage.className = "success";
+  if(saved){
 
-    copyMessage.textContent =
-      "✅ Request copied!";
-
-
-  }catch(error){
-
-    copyMessage.className = "error";
-
-    copyMessage.textContent =
-      "❌ Couldn't copy automatically.";
+    displayRequest(saved);
 
   }
 
 }
 
 
-/* ======================================
-   START
-   ====================================== */
-
 loadSavedRequest();
 
 </script>
+
+</body>
+</html>
